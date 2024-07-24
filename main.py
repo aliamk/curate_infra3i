@@ -2,9 +2,10 @@ import streamlit as st
 import pandas as pd
 import tempfile
 import os
-from datetime import datetime
 from openpyxl import load_workbook
+from datetime import datetime
 import time
+import pytz
 import re
 
 # Function to autofit columns
@@ -951,7 +952,10 @@ def create_destination_file(source_path, start_time):
         tabs["Tranche_Roles_Any"] = update_tranche_roles_any(tabs["Tranches"], tabs["Tranche_Roles_Any"])
 
         # Save the DataFrame to a new Excel file with multiple sheets
-        new_file_name = f"curated_INFRA3_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+        london_tz = pytz.timezone('Europe/London')
+        current_time = datetime.now(london_tz)
+        formatted_time = current_time.strftime('%Y%m%d_%H%M')
+        new_file_name = f"curated_INFRA3_{formatted_time}.xlsx"
         new_file_path = os.path.join(tempfile.gettempdir(), new_file_name)
         
         with pd.ExcelWriter(new_file_path, engine='openpyxl') as writer:

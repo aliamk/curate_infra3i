@@ -68,6 +68,23 @@ def process_transaction_sheet(transaction_df):
     # Set 'Asset Class' column to 'Infrastructure'
     transaction_df['Transaction Asset Class'] = 'Infrastructure'
 
+
+def replace_tranche_tertiary_type(tranches_df):
+    replacements = {
+        'Capex Facility': '',
+        'Change-in-Law Facility': '',
+        'Equity Bridge Loan': '',
+        'Export Credit': 'Export Credit Facility',
+        'Government Grant': '',
+        'Government Loan': 'State Loan',
+        'Islamic Financing': 'Term Loan',
+        'Multilateral': 'Multilateral Loan',
+        'Other': '',
+        'Standby/Contigency Facility': 'Standby Facility'
+    }
+    tranches_df['Tranche Tertiary Type'] = tranches_df['Tranche Tertiary Type'].replace(replacements)
+    return tranches_df
+
 def replace_transaction_type(type):
     replacements = {
         'Additional Financing': 'Additional Financing',
@@ -783,6 +800,9 @@ def create_destination_file(source_path, start_time):
 
         tabs["Tranches"] = tabs["Tranches"][required_columns]
 
+        # Replace words in 'Tranche Tertiary Type' column
+        tabs["Tranches"] = replace_tranche_tertiary_type(tabs["Tranches"])
+
         ### Function to populate 'Tranche_Roles_Any' tab ###
         def populate_tranche_roles_any(transaction_df, tranche_roles_any_df):
             entries = []
@@ -957,7 +977,7 @@ def create_destination_file(source_path, start_time):
         raise
 
 ### Streamlit app ###
-st.title('Curating INFRA 3 Data Files')
+st.title('Curating INFRA 3i Data Files')
 
 uploaded_file = st.file_uploader("Choose a source file", type=["xlsx"])
 

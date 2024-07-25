@@ -672,15 +672,15 @@ def create_destination_file(source_path, start_time):
         # Loan Debt Tranche data
         for i in range(1, 21):
             tranche_col = f"Loan Debt Tranche {i} Type"
+            tranche_volume_col = f"Tranche {i} Volume USD (m)"
             copied_tranche_col = False  # Flag to track if message is printed for this column
-            if tranche_col in df.columns:
+            if tranche_col in df.columns or tranche_volume_col in df.columns:
                 # Ensure 'Transaction Upload ID' column exists
                 if 'Transaction Upload ID' in df.columns:
-                    valid_entries = df[['Transaction Upload ID', tranche_col]].dropna(subset=[tranche_col]).copy()
+                    valid_entries = df[['Transaction Upload ID', tranche_col, tranche_volume_col]].dropna(subset=[tranche_col, tranche_volume_col]).copy()
                     valid_entries['Tranche Upload ID'] = valid_entries['Transaction Upload ID'].astype(str) + f"-L{i}"
                     valid_entries['Tranche Tertiary Type'] = valid_entries[tranche_col]
-                    valid_entries['Value'] = ""
-                    valid_entries['Helper_Tranche Value USD m'] = df['Transaction size USD(m)'] if 'Transaction size USD(m)' in df.columns else None
+                    valid_entries['Helper_Tranche Value USD m'] = valid_entries[tranche_volume_col]
                     valid_entries['Helper_Transaction Value USD m'] = df['Transaction size USD(m)'] if 'Transaction size USD(m)' in df.columns else None
                     valid_entries['Helper_Transaction Value LC'] = df['Transaction size (m)'] if 'Transaction size (m)' in df.columns else None
                     valid_entries['Tenor'] = df[f'Tranche {i} Tenor'] if f'Tranche {i} Tenor' in df.columns else None
@@ -690,12 +690,12 @@ def create_destination_file(source_path, start_time):
 
                     tranche_entries.append(valid_entries)
                     if not copied_tranche_col:
-                        st.write(f"<small>Copied data for 'Tranches' from '{tranche_col}'</small>", unsafe_allow_html=True)
+                        st.write(f"<small>Copied data for 'Tranches' from '{tranche_col}' and '{tranche_volume_col}'</small>", unsafe_allow_html=True)
                         copied_tranche_col = True  # Set the flag to True after printing the message
                 else:
                     st.warning(f"'Transaction Upload ID' column not found in the source file.")
             else:
-                st.warning(f"'{tranche_col}' column not found in the source file.")
+                st.warning(f"'{tranche_col}' or '{tranche_volume_col}' column not found in the source file.")
 
         # Capital Market Debt data
         for i in range(1, 21):

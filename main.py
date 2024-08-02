@@ -63,7 +63,7 @@ def process_transaction_sheet(transaction_df):
     transaction_df['Contract'] = transaction_df['Contract'].apply(replace_contract)
     
     # Clean the 'Transaction Name' column
-    transaction_df['Transaction Name'] = transaction_df['Transaction Name'].str.replace(' and ', ' & ').str.strip()
+    transaction_df['Transaction Name'] = transaction_df['Transaction Name'].str.replace(' And ', ' & ').str.replace(' and ', ' & ').str.strip()
     transaction_df['Transaction Name'] = transaction_df['Transaction Name'].apply(lambda x: re.sub(r'\s{2,}', ' ', x))
 
     # Set 'Asset Class' column to 'Infrastructure'

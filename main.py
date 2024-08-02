@@ -766,13 +766,13 @@ def create_destination_file(source_path, start_time):
 
         # Update 'Tranche Primary Type', 'Tranche Secondary Type' and 'Tranche Tertiary Type' based on 'Tranche Upload ID'
         tabs["Tranches"]['Tranche Primary Type'] = tabs["Tranches"]['Tranche Upload ID'].apply(
-            lambda x: 'Debt' if any(x.endswith(suffix) for suffix in ['L1', 'L2', 'L3', 'CM1', 'CM2', 'CM3']) else 'Equity'
+            lambda x: 'Debt' if any(x.endswith(suffix) for suffix in ['L'+str(i) for i in range(1, 21)] + ['CM'+str(i) for i in range(1, 21)]) else 'Equity'
         )
         tabs["Tranches"]['Tranche Secondary Type'] = tabs["Tranches"]['Tranche Upload ID'].apply(
-            lambda x: 'Loan' if any(x.endswith(suffix) for suffix in ['L1', 'L2', 'L3']) else ('Bond' if any(x.endswith(suffix) for suffix in ['CM1', 'CM2', 'CM3']) else 'Equity')
+            lambda x: 'Loan' if any(x.endswith(suffix) for suffix in ['L' + str(i) for i in range(1, 21)]) else ('Bond' if any(x.endswith(suffix) for suffix in ['CM' + str(i) for i in range(1, 21)]) else 'Equity')
         )
         tabs["Tranches"]['Tranche Tertiary Type'] = tabs["Tranches"].apply(
-            lambda row: 'Commercial Bond' if any(row['Tranche Upload ID'].endswith(suffix) for suffix in ['CM1', 'CM2', 'CM3']) else row['Tranche Tertiary Type'],
+            lambda row: 'Commercial Bond' if any(row['Tranche Upload ID'].endswith(suffix) for suffix in ['CM'+str(i) for i in range(1, 21)]) else row['Tranche Tertiary Type'],
             axis=1
         )
 
